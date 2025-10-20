@@ -20,7 +20,7 @@ jobs:
       - name: Generate image list JSON with full URLs
         run: |
           # GitHub Pages URL 설정 (본인의 username과 repo 이름으로 변경)
-          BASE_URL="https://belivejs.github.io/test_action"
+          BASE_URL="https://github.com/belivejs/test_action"
           
           # 이미지 파일을 찾아서 전체 URL로 변환
           find images -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) | \
