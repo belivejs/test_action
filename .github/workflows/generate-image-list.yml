@@ -3,8 +3,11 @@ name: Generate Image List
 on:
   push:
     paths:
-      - 'images/**'  # images 폴더에 변경이 있을 때만 실행
-  workflow_dispatch:  # 수동 실행도 가능
+      - 'images/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   generate-list:
@@ -14,10 +17,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Generate image list JSON
+      - name: Generate image list JSON with full URLs
         run: |
-          # images 폴더의 모든 이미지 파일을 찾아서 JSON 배열로 만들기
+          # GitHub Pages URL 설정 (본인의 username과 repo 이름으로 변경)
+          BASE_URL="https://belivejs.github.io/test_action"
+          
+          # 이미지 파일을 찾아서 전체 URL로 변환
           find images -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) | \
+          sed "s|^|${BASE_URL}/|" | \
           jq -R -s -c 'split("\n")[:-1]' > images.json
           
       - name: Commit and push if changed
