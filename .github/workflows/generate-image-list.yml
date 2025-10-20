@@ -1,0 +1,28 @@
+name: Generate Image List
+
+on:
+  push:
+    paths:
+      - 'images/**'  # images 폴더에 변경이 있을 때만 실행
+  workflow_dispatch:  # 수동 실행도 가능
+
+jobs:
+  generate-list:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Generate image list JSON
+        run: |
+          # images 폴더의 모든 이미지 파일을 찾아서 JSON 배열로 만들기
+          find images -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) | \
+          jq -R -s -c 'split("\n")[:-1]' > images.json
+          
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add images.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update image list [skip ci]" && git push)
